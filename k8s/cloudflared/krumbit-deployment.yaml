@@ -20,6 +20,8 @@ spec:
       labels:
         app: krumbit-app
         easynet.world/descheduler-safe: "true"
+      annotations:
+        krumbit.co/source-revision: "26a182b"
     spec:
       containers:
         - name: web
