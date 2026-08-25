@@ -179,7 +179,7 @@ export default function Home() {
       <footer className="site-footer">
         <Brand />
         <p>Keep scrolling. Start learning.</p>
-        <div><a href="/about">About</a><a href="/news">News</a><a href="/privacy">Privacy</a><a href="/support">Support</a><a href="mailto:krumbit.co@gmail.com">Contact</a><span>© 2026 Krumbit Inc.</span></div>
+        <div><a href="/about">About</a><a href="/news">News</a><a href="/privacy">Privacy</a><a href="/support">Support</a><a href="mailto:info@krumbit.co">Contact</a><span>© 2026 Krumbit Inc.</span></div>
       </footer>
 
       <a className="mobile-download" href={appStoreUrl} target="_blank" rel="noreferrer">Download Krumbit free <span aria-hidden="true">↗</span></a>

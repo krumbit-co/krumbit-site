@@ -23,7 +23,7 @@ export default function News() {
           <h2>What comes next</h2>
           <p>We are staying focused on the fundamentals—better lessons, stronger recall, more relevant topics, and a product people are happy to open when they have five minutes to spare.</p>
           <p>We are grateful to our early supporters, learners, and angel backers for believing that the next generation of feeds can leave people feeling smarter than when they arrived.</p>
-          <p>Media and partnership inquiries can be sent to <a href="mailto:krumbit.co@gmail.com">krumbit.co@gmail.com</a>.</p>
+          <p>Media and partnership inquiries can be sent to <a href="mailto:info@krumbit.co">info@krumbit.co</a>.</p>
         </article>
       </main>
     </div>

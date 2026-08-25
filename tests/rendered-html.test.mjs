@@ -29,7 +29,7 @@ test("server-renders privacy and support pages", async () => {
     assert.equal(response.status, 200);
     const html = await response.text();
     assert.match(html, /Krumbit/);
-    assert.match(html, /krumbit\.co@gmail\.com/);
+    assert.match(html, /info@krumbit\.co/);
   }
 });
 
@@ -38,7 +38,7 @@ test("server-renders the angel funding news page", async () => {
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /secures angel funding/i);
-  assert.match(html, /krumbit\.co@gmail\.com/);
+  assert.match(html, /info@krumbit\.co/);
 });
 
 test("server-renders the founders in the requested order", async () => {
