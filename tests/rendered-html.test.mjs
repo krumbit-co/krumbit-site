@@ -17,7 +17,8 @@ test("server-renders the Krumbit product page", async () => {
   assert.match(html, /Your next scroll/);
   assert.match(html, /Download free/i);
   assert.match(html, /4\.7 from early ratings/i);
-  assert.match(html, /One small loop/i);
+  assert.match(html, /Familiar rhythm/i);
+  assert.match(html, /Custom Solutions/i);
   assert.match(html, /apps\.apple\.com\/us\/app\/krumbit/);
   assert.match(html, /og\.png/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
@@ -49,8 +50,19 @@ test("server-renders the founders in the requested order", async () => {
   assert.ok(html.indexOf("Hengrui Liang") < html.indexOf("Arnav Saharan"));
 });
 
+test("server-renders product and custom solutions pages", async () => {
+  const product = await render("/product");
+  assert.equal(product.status, 200);
+  assert.match(await product.text(), /Swipe\. Recall\. Grow/i);
+  const solutions = await render("/solutions");
+  assert.equal(solutions.status, 200);
+  const html = await solutions.text();
+  assert.match(html, /Your knowledge/i);
+  assert.match(html, /info@krumbit\.co/);
+});
+
 test("exports the complete GitHub Pages site", async () => {
-  for (const file of ["index.html", "about/index.html", "privacy/index.html", "support/index.html", "news/index.html"]) {
+  for (const file of ["index.html", "about/index.html", "product/index.html", "solutions/index.html", "privacy/index.html", "support/index.html", "news/index.html"]) {
     const html = await readFile(new URL(`../dist/static/${file}`, import.meta.url), "utf8");
     assert.match(html, /Krumbit/);
   }

@@ -6,10 +6,7 @@ export const metadata = {
 export default function News() {
   return (
     <div className="legal-page">
-      <header className="legal-header">
-        <a className="brand" href="/"><img src="/krumbit-icon.png" alt="" /><span>Krumbit</span></a>
-        <a href="/">Back home →</a>
-      </header>
+      <SiteHeader />
       <main className="legal-main">
         <div className="legal-mark">K</div>
         <p className="section-label news-label">Company news · August 25, 2026</p>
@@ -25,7 +22,10 @@ export default function News() {
           <p>We are grateful to our early supporters, learners, and angel backers for believing that the next generation of feeds can leave people feeling smarter than when they arrived.</p>
           <p>Media and partnership inquiries can be sent to <a href="mailto:info@krumbit.co">info@krumbit.co</a>.</p>
         </article>
+        <aside className="press-box"><p className="section-label">ABOUT KRUMBIT</p><h2>A smarter alternative to mindless scrolling.</h2><p>Krumbit is a short-form learning product that combines visual lessons, quick recall, personalized topics, and visible progress. It is available for iPhone and iPad.</p><div><a href="/about">Company story →</a><a href="/product">Explore the product →</a><a href="mailto:info@krumbit.co">Media contact →</a></div></aside>
       </main>
+      <SiteFooter />
     </div>
   );
 }
+import { SiteFooter, SiteHeader } from "../components/site-chrome";

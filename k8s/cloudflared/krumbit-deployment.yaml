@@ -21,7 +21,7 @@ spec:
         app: krumbit-app
         easynet.world/descheduler-safe: "true"
       annotations:
-        krumbit.co/source-revision: "26a182b"
+        krumbit.co/source-revision: "menu-redesign-20260825"
     spec:
       containers:
         - name: web
