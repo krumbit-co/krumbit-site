@@ -29,7 +29,7 @@ spec:
             - -ec
             - |
               apk add --no-cache git
-              git clone --depth 1 --branch master https://github.com/krumbit-co/krumbit-site.git /app
+              git clone --depth 1 --branch main https://github.com/krumbit-co/krumbit-site.git /app
               cd /app
               npm ci --include=dev
               npm run export
