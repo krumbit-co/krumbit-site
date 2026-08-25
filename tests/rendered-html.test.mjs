@@ -41,8 +41,16 @@ test("server-renders the angel funding news page", async () => {
   assert.match(html, /krumbit\.co@gmail\.com/);
 });
 
+test("server-renders the founders in the requested order", async () => {
+  const response = await render("/about");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /About Us — Krumbit/);
+  assert.ok(html.indexOf("Hengrui Liang") < html.indexOf("Arnav Saharan"));
+});
+
 test("exports the complete GitHub Pages site", async () => {
-  for (const file of ["index.html", "privacy/index.html", "support/index.html", "news/index.html"]) {
+  for (const file of ["index.html", "about/index.html", "privacy/index.html", "support/index.html", "news/index.html"]) {
     const html = await readFile(new URL(`../dist/static/${file}`, import.meta.url), "utf8");
     assert.match(html, /Krumbit/);
   }

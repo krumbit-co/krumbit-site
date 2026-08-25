@@ -95,6 +95,8 @@ h1 em,.section-heading h2 em,.review-summary h2 em { color: transparent; font-st
 
 .news-label { margin: 32px 0 0; }
 .news-article > p:first-child { color: #edf5f7; font-size: 20px; line-height: 1.65; }
+.about-main { padding-bottom: 120px; }
+.founders-section { margin-top: 70px; }.founders-section > h2 { margin: 10px 0 28px; font-size: clamp(38px,5vw,54px); letter-spacing: -.05em; }.founder-list { display: grid; gap: 16px; }.founder-card { min-height: 150px; padding: 24px 30px; display: grid; grid-template-columns: 42px 72px 1fr; align-items: center; gap: 22px; border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(135deg,#12212a,#0a141c); }.founder-card > span { color: var(--teal); font-size: 11px; font-weight: 800; letter-spacing: .12em; }.founder-avatar { width: 72px; height: 72px; display: grid; place-items: center; border-radius: 22px; color: #071219; background: linear-gradient(135deg,var(--teal),#76a6ff); font-size: 30px; font-weight: 850; }.founder-card small { color: #7f939e; font-size: 9px; font-weight: 800; letter-spacing: .16em; }.founder-card h3 { margin: 6px 0 0; font-size: 27px; letter-spacing: -.035em; }
 
 @media (max-width: 1000px) {
   nav > a:not(.app-store-button) { display: none; }
@@ -118,6 +120,7 @@ h1 em,.section-heading h2 em,.review-summary h2 em { color: transparent; font-st
   .final-cta { padding-bottom: 125px; }.site-footer { padding-bottom: 100px; grid-template-columns: 1fr; justify-items: center; text-align: center; }.site-footer > div { justify-self: center; flex-wrap: wrap; justify-content: center; gap: 14px; }
   .mobile-download { display: flex; min-height: 52px; position: fixed; z-index: 30; left: 14px; right: 14px; bottom: 13px; align-items: center; justify-content: center; gap: 16px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; color: #071319; background: linear-gradient(90deg,#47eadf,#81d38c); box-shadow: 0 15px 35px rgba(0,0,0,.35); font-size: 13px; font-weight: 800; text-decoration: none; }.mobile-download span { font-size: 12px; }
   .legal-main h1 { font-size: 52px; }
+  .founder-card { padding: 22px; grid-template-columns: 32px 58px 1fr; gap: 13px; }.founder-avatar { width: 58px; height: 58px; border-radius: 18px; font-size: 25px; }.founder-card h3 { font-size: 22px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

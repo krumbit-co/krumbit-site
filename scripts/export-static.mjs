@@ -19,6 +19,7 @@ await cp(clientDir, outputDir, { recursive: true });
 
 const routes = [
   ["/", "index.html"],
+  ["/about", "about/index.html"],
   ["/privacy", "privacy/index.html"],
   ["/support", "support/index.html"],
   ["/news", "news/index.html"],
