@@ -21,65 +21,48 @@ spec:
         app: krumbit-app
         easynet.world/descheduler-safe: "true"
     spec:
-      initContainers:
-        - name: build-site
+      containers:
+        - name: web
           image: node:22-alpine
           command:
             - /bin/sh
             - -ec
             - |
               apk add --no-cache git
-              git clone --depth 1 --branch master https://github.com/krumbit-co/krumbit-site.git /work/src
-              cd /work/src
+              git clone --depth 1 --branch master https://github.com/krumbit-co/krumbit-site.git /app
+              cd /app
               npm ci
               npm run export
-              cp -R dist/static/. /site/
-          volumeMounts:
-            - name: work
-              mountPath: /work
-            - name: site
-              mountPath: /site
+              npm start
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3000"
+          ports:
+            - name: http
+              containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 3
           resources:
             requests:
-              cpu: 250m
-              memory: 256Mi
+              cpu: 100m
+              memory: 128Mi
             limits:
               cpu: "1"
               memory: 1Gi
-      containers:
-        - name: web
-          image: nginx:1.29-alpine
-          ports:
-            - name: http
-              containerPort: 80
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 80
-            initialDelaySeconds: 3
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 80
-            initialDelaySeconds: 10
-            periodSeconds: 30
-          resources:
-            requests:
-              cpu: 25m
-              memory: 32Mi
-            limits:
-              cpu: 200m
-              memory: 128Mi
-          volumeMounts:
-            - name: site
-              mountPath: /usr/share/nginx/html
-              readOnly: true
-      volumes:
-        - name: work
-          emptyDir: {}
-        - name: site
-          emptyDir: {}
       nodeSelector:
         node-role.kubernetes.io/worker: ""
       topologySpreadConstraints:
