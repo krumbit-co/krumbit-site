@@ -13,78 +13,80 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 100%
-      maxUnavailable: 0
+      maxSurge: 1
+      maxUnavailable: 1
   template:
     metadata:
       labels:
         app: krumbit-app
         easynet.world/descheduler-safe: "true"
     spec:
+      initContainers:
+        - name: build-site
+          image: node:22-alpine
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              apk add --no-cache git
+              git clone --depth 1 --branch master https://github.com/krumbit-co/krumbit-site.git /work/src
+              cd /work/src
+              npm ci
+              npm run export
+              cp -R dist/static/. /site/
+          volumeMounts:
+            - name: work
+              mountPath: /work
+            - name: site
+              mountPath: /site
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
       containers:
-        - name: krumbit-app
-          image: 192.168.0.201:5000/krumbit-app:latest
-          imagePullPolicy: Always
+        - name: web
+          image: nginx:1.29-alpine
           ports:
             - name: http
-              containerPort: 3000
-          env:
-            - name: NODE_ENV
-              value: production
-            - name: PORT
-              value: "3000"
-            - name: SUPABASE_URL
-              valueFrom: {secretKeyRef: {name: krumbit-secrets, key: supabase-url}}
-            - name: SUPABASE_ANON_KEY
-              valueFrom: {secretKeyRef: {name: krumbit-secrets, key: supabase-anon-key}}
-            - name: SUPABASE_SERVICE_ROLE_KEY
-              valueFrom: {secretKeyRef: {name: krumbit-secrets, key: supabase-service-role-key}}
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom: {secretKeyRef: {name: krumbit-secrets, key: aws-access-key-id}}
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom: {secretKeyRef: {name: krumbit-secrets, key: aws-secret-access-key}}
-            - name: AWS_REGION
-              valueFrom: {configMapKeyRef: {name: krumbit-config, key: aws-region}}
-            - name: S3_BUCKET_NAME
-              valueFrom: {configMapKeyRef: {name: krumbit-config, key: s3-bucket-name}}
-            - name: DB_HOST
-              valueFrom: {configMapKeyRef: {name: krumbit-config, key: db-host}}
-            - name: DB_PORT
-              valueFrom: {configMapKeyRef: {name: krumbit-config, key: db-port}}
-            - name: DB_USER
-              valueFrom: {configMapKeyRef: {name: krumbit-config, key: db-user}}
-            - name: DB_PASSWORD
-              valueFrom: {secretKeyRef: {name: krumbit-secrets, key: db-password}}
-            - name: DB_NAME
-              valueFrom: {configMapKeyRef: {name: krumbit-config, key: db-name}}
-            - name: DB_SSL
-              valueFrom: {configMapKeyRef: {name: krumbit-config, key: db-ssl}}
-            - name: CLOUDFRONT_DOMAIN
-              valueFrom: {configMapKeyRef: {name: krumbit-config, key: cloudfront-domain}}
+              containerPort: 80
           readinessProbe:
-            httpGet: {path: /api/port, port: 3000}
-            initialDelaySeconds: 30
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 3
             periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
           livenessProbe:
-            httpGet: {path: /api/port, port: 3000}
-            initialDelaySeconds: 60
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
             periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 5
           resources:
-            requests: {cpu: 250m, memory: 256Mi}
-            limits: {cpu: 500m, memory: 512Mi}
-      imagePullSecrets:
-        - name: registry-easynet-secret
-        - name: registry-secret
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          volumeMounts:
+            - name: site
+              mountPath: /usr/share/nginx/html
+              readOnly: true
+      volumes:
+        - name: work
+          emptyDir: {}
+        - name: site
+          emptyDir: {}
       nodeSelector:
         node-role.kubernetes.io/worker: ""
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
+          whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
               app: krumbit-app
+      terminationGracePeriodSeconds: 30
