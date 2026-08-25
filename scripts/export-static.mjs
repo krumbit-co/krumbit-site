@@ -21,11 +21,12 @@ const routes = [
   ["/", "index.html"],
   ["/privacy", "privacy/index.html"],
   ["/support", "support/index.html"],
+  ["/news", "news/index.html"],
 ];
 
 for (const [pathname, output] of routes) {
   const response = await worker.fetch(
-    new Request(`https://krumbit-app.easynet.world${pathname}`, {
+    new Request(`https://www.krumbit.co${pathname}`, {
       headers: { accept: "text/html" },
     }),
     env,
@@ -42,7 +43,7 @@ for (const [pathname, output] of routes) {
 await writeFile(new URL("../dist/static/.nojekyll", import.meta.url), "");
 await writeFile(
   new URL("../dist/static/CNAME", import.meta.url),
-  "krumbit-app.easynet.world\n",
+  "www.krumbit.co\n",
 );
 
 console.log(`Exported ${routes.length} routes to dist/static`);

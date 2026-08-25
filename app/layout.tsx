@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://krumbit-app.easynet.world"),
+  metadataBase: new URL("https://www.krumbit.co"),
   title: "Krumbit — Your Next Scroll Can Make You Smarter",
   description: "Replace mindless scrolling with quick visual lessons, one-question recall, and progress you can see. Download Krumbit free on iPhone and iPad.",
   icons: { icon: "/krumbit-icon.png", apple: "/krumbit-icon.png" },

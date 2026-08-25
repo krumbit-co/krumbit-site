@@ -31,7 +31,7 @@ spec:
               apk add --no-cache git
               git clone --depth 1 --branch master https://github.com/krumbit-co/krumbit-site.git /app
               cd /app
-              npm ci
+              npm ci --include=dev
               npm run export
               npm start
           env:

@@ -33,14 +33,22 @@ test("server-renders privacy and support pages", async () => {
   }
 });
 
+test("server-renders the angel funding news page", async () => {
+  const response = await render("/news");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /secures angel funding/i);
+  assert.match(html, /krumbit\.co@gmail\.com/);
+});
+
 test("exports the complete GitHub Pages site", async () => {
-  for (const file of ["index.html", "privacy/index.html", "support/index.html"]) {
+  for (const file of ["index.html", "privacy/index.html", "support/index.html", "news/index.html"]) {
     const html = await readFile(new URL(`../dist/static/${file}`, import.meta.url), "utf8");
     assert.match(html, /Krumbit/);
   }
 
   const cname = await readFile(new URL("../dist/static/CNAME", import.meta.url), "utf8");
-  assert.equal(cname, "krumbit-app.easynet.world\n");
+  assert.equal(cname, "www.krumbit.co\n");
   await readFile(new URL("../dist/static/.nojekyll", import.meta.url));
   await readFile(new URL("../dist/static/og.png", import.meta.url));
 });
