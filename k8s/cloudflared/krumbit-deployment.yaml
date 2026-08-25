@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: krumbit-app
+  namespace: easynet
+  labels:
+    app: krumbit-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: krumbit-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: krumbit-app
+        easynet.world/descheduler-safe: "true"
+    spec:
+      containers:
+        - name: krumbit-app
+          image: 192.168.0.201:5000/krumbit-app:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3000"
+            - name: SUPABASE_URL
+              valueFrom: {secretKeyRef: {name: krumbit-secrets, key: supabase-url}}
+            - name: SUPABASE_ANON_KEY
+              valueFrom: {secretKeyRef: {name: krumbit-secrets, key: supabase-anon-key}}
+            - name: SUPABASE_SERVICE_ROLE_KEY
+              valueFrom: {secretKeyRef: {name: krumbit-secrets, key: supabase-service-role-key}}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom: {secretKeyRef: {name: krumbit-secrets, key: aws-access-key-id}}
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom: {secretKeyRef: {name: krumbit-secrets, key: aws-secret-access-key}}
+            - name: AWS_REGION
+              valueFrom: {configMapKeyRef: {name: krumbit-config, key: aws-region}}
+            - name: S3_BUCKET_NAME
+              valueFrom: {configMapKeyRef: {name: krumbit-config, key: s3-bucket-name}}
+            - name: DB_HOST
+              valueFrom: {configMapKeyRef: {name: krumbit-config, key: db-host}}
+            - name: DB_PORT
+              valueFrom: {configMapKeyRef: {name: krumbit-config, key: db-port}}
+            - name: DB_USER
+              valueFrom: {configMapKeyRef: {name: krumbit-config, key: db-user}}
+            - name: DB_PASSWORD
+              valueFrom: {secretKeyRef: {name: krumbit-secrets, key: db-password}}
+            - name: DB_NAME
+              valueFrom: {configMapKeyRef: {name: krumbit-config, key: db-name}}
+            - name: DB_SSL
+              valueFrom: {configMapKeyRef: {name: krumbit-config, key: db-ssl}}
+            - name: CLOUDFRONT_DOMAIN
+              valueFrom: {configMapKeyRef: {name: krumbit-config, key: cloudfront-domain}}
+          readinessProbe:
+            httpGet: {path: /api/port, port: 3000}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet: {path: /api/port, port: 3000}
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
+          resources:
+            requests: {cpu: 250m, memory: 256Mi}
+            limits: {cpu: 500m, memory: 512Mi}
+      imagePullSecrets:
+        - name: registry-easynet-secret
+        - name: registry-secret
+      nodeSelector:
+        node-role.kubernetes.io/worker: ""
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: krumbit-app

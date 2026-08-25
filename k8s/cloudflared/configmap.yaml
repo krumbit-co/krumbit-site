@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: krumbit-config
+  namespace: easynet
+data:
+  aws-region: us-east-2
+  cloudfront-domain: https://d2mc8pr6atrbbw.cloudfront.net
+  db-host: postgres-service.easynet.svc.cluster.local
+  db-name: krumbit
+  db-port: "5432"
+  db-ssl: "false"
+  db-user: admin
+  s3-bucket-name: ego-video-bucket

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: easynet-world-7132-easy-kafka-accessor-krumbit-pvc
+  namespace: easynet
+  labels:
+    app.kubernetes.io/name: krumbit
+    app.kubernetes.io/component: storage
+    app.kubernetes.io/managed-by: argocd
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: ""
+  volumeMode: Filesystem
+  volumeName: easynet-world-7132-easy-kafka-accessor-krumbit-pv

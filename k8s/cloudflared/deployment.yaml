@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflared-krumbit
+  namespace: easynet
+  labels:
+    app: cloudflared-krumbit
+    app.kubernetes.io/name: cloudflared-krumbit
+    app.kubernetes.io/part-of: krumbit
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloudflared-krumbit
+  template:
+    metadata:
+      labels:
+        app: cloudflared-krumbit
+        app.kubernetes.io/name: cloudflared-krumbit
+        app.kubernetes.io/part-of: krumbit
+    spec:
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:2026.7.1
+          args:
+            - tunnel
+            - --no-autoupdate
+            - --protocol
+            - http2
+            - run
+          env:
+            - name: TUNNEL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflared-krumbit-token
+                  key: TUNNEL_TOKEN
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65532
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 30
