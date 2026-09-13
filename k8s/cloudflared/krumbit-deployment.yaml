@@ -20,57 +20,78 @@ spec:
       labels:
         app: krumbit-app
         easynet.world/descheduler-safe: "true"
-      annotations:
-        krumbit.co/source-revision: "menu-redesign-20260825"
     spec:
       containers:
-        - name: web
-          image: node:22-alpine
-          command:
-            - /bin/sh
-            - -ec
-            - |
-              apk add --no-cache git
-              git clone --depth 1 --branch main https://github.com/krumbit-co/krumbit-site.git /app
-              cd /app
-              npm ci --include=dev
-              npm run export
-              npm start
+        - name: krumbit-app
+          image: 192.168.0.201:5000/krumbit-app@sha256:0e279a42f55e33e99c5159ffca2e8c11f2fe20fae4c319dfedb7262a5bc2fa93
+          imagePullPolicy: Always
           env:
             - name: NODE_ENV
               value: production
             - name: PORT
               value: "3000"
+            - name: SUPABASE_URL
+              valueFrom: { secretKeyRef: { name: krumbit-secrets, key: supabase-url } }
+            - name: SUPABASE_ANON_KEY
+              valueFrom: { secretKeyRef: { name: krumbit-secrets, key: supabase-anon-key } }
+            - name: SUPABASE_SERVICE_ROLE_KEY
+              valueFrom: { secretKeyRef: { name: krumbit-secrets, key: supabase-service-role-key } }
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom: { secretKeyRef: { name: krumbit-secrets, key: aws-access-key-id } }
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom: { secretKeyRef: { name: krumbit-secrets, key: aws-secret-access-key } }
+            - name: AWS_REGION
+              valueFrom: { configMapKeyRef: { name: krumbit-config, key: aws-region } }
+            - name: S3_BUCKET_NAME
+              valueFrom: { configMapKeyRef: { name: krumbit-config, key: s3-bucket-name } }
+            - name: DB_HOST
+              valueFrom: { configMapKeyRef: { name: krumbit-config, key: db-host } }
+            - name: DB_PORT
+              valueFrom: { configMapKeyRef: { name: krumbit-config, key: db-port } }
+            - name: DB_USER
+              valueFrom: { configMapKeyRef: { name: krumbit-config, key: db-user } }
+            - name: DB_PASSWORD
+              valueFrom: { secretKeyRef: { name: krumbit-secrets, key: db-password } }
+            - name: DB_NAME
+              valueFrom: { configMapKeyRef: { name: krumbit-config, key: db-name } }
+            - name: DB_SSL
+              valueFrom: { configMapKeyRef: { name: krumbit-config, key: db-ssl } }
+            - name: CLOUDFRONT_DOMAIN
+              valueFrom: { configMapKeyRef: { name: krumbit-config, key: cloudfront-domain } }
           ports:
             - name: http
               containerPort: 3000
           readinessProbe:
             httpGet:
-              path: /healthz
-              port: 3000
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 3
-          livenessProbe:
-            httpGet:
-              path: /healthz
+              path: /api/port
               port: 3000
             initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/port
+              port: 3000
+            initialDelaySeconds: 60
             periodSeconds: 30
-            timeoutSeconds: 3
+            timeoutSeconds: 10
+            failureThreshold: 5
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: 250m
+              memory: 256Mi
             limits:
-              cpu: "1"
-              memory: 1Gi
+              cpu: 500m
+              memory: 512Mi
+      imagePullSecrets:
+        - name: registry-easynet-secret
+        - name: registry-secret
       nodeSelector:
         node-role.kubernetes.io/worker: ""
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: ScheduleAnyway
+          whenUnsatisfiable: DoNotSchedule
           labelSelector:
             matchLabels:
               app: krumbit-app
