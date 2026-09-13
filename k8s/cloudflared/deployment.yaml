@@ -19,6 +19,22 @@ spec:
         app.kubernetes.io/name: cloudflared-krumbit
         app.kubernetes.io/part-of: krumbit
     spec:
+      tolerations:
+        - key: node.kubernetes.io/not-ready
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 60
+        - key: node.kubernetes.io/unreachable
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 60
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: cloudflared-krumbit
       containers:
         - name: cloudflared
           image: cloudflare/cloudflared:2026.7.1

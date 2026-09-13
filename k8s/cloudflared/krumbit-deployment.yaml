@@ -21,6 +21,15 @@ spec:
         app: krumbit-app
         easynet.world/descheduler-safe: "true"
     spec:
+      tolerations:
+        - key: node.kubernetes.io/not-ready
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 60
+        - key: node.kubernetes.io/unreachable
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 60
       containers:
         - name: krumbit-app
           image: 192.168.0.201:5000/krumbit-app@sha256:0e279a42f55e33e99c5159ffca2e8c11f2fe20fae4c319dfedb7262a5bc2fa93
